@@ -32,7 +32,7 @@ Strict security policies enforce **RBAC, network segmentation, and image verific
 ```mermaid
 graph TD;
   subgraph DMZ_VLAN[DMZ VLAN]
-    subgraph DMZ_Cluster[DMZ Kubernetes Cluster]
+    subgraph DMZ_Cluster[DMZ Cluster]
       ArgoCD_DMZ[ArgoCD]
       Crossplane_DMZ[Crossplane]
       Proxies[Proxies]
