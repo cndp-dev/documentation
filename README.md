@@ -29,6 +29,44 @@ Strict security policies enforce **RBAC, network segmentation, and image verific
 
 ## 3. Architecture Overview
 
+```mermaid
+graph TD;
+  subgraph DMZ_VLAN[DMZ VLAN]
+    subgraph DMZ_Cluster[DMZ Kubernetes Cluster]
+      ArgoCD_DMZ[ArgoCD]
+      Crossplane_DMZ[Crossplane]
+      Proxies[Proxies]
+      Registries[Registries]
+    end
+    Bootstrap_Node[Minimal DMZ]
+  end
+
+  subgraph Datacenter_VLAN[Datacenter VLAN]
+    subgraph Platform_Cluster[Platform Cluster]
+      ArgoCD[ArgoCD]
+      Crossplane[Crossplane]
+      Core_Services[Core Services]
+    end
+
+    subgraph Production_Cluster[Production Cluster]
+      ArgoCD_Prod[ArgoCD]
+      Crossplane_Prod[Crossplane]
+      Organizations[Organization - Nested Virtualization]
+    end
+  end
+
+  %% Network Connections
+  Platform_Cluster -. bootstrap only .-> Bootstrap_Node
+  Platform_Cluster -->|Manages| Production_Cluster
+  Platform_Cluster -->|Manages| DMZ_Cluster
+  Production_Cluster -->|pull from| Registries
+  Platform_Cluster -->|pull from| Registries
+
+  %% Formatting
+  Organizations@{ shape: procs }
+
+```
+
 CNDP consists of multiple Kubernetes clusters, each serving a distinct function:
 
 - **Platform Cluster**: Provisions and governs infrastructure, running core services such as authentication, monitoring, and GitOps controllers.
